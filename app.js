@@ -10,6 +10,19 @@ const campsiteRouter = require('./routes/campsiteRouter');
 const promotionsRouter = require('./routes/promotionsRouter');
 const partnersRouter = require('./routes/partnersRouter');
 
+const mongoose = require("mongoose");
+const url = "mongodb://localhost:27017";
+const connect = mongoose.connect(url, { 
+  useCreateIndex: true,
+  useFindAndModify: false,
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+
+connect.then(() => console.log("Connected correctly to the mongodb server."),  //another way to log an error (good with no chains)
+  err=> console.log(err)
+);
+
 var app = express();
 
 // view engine setup
@@ -27,6 +40,7 @@ app.use('/users', usersRouter);
 app.use('/campsites', campsiteRouter);
 app.use('/promotions', promotionsRouter);
 app.use('/partners', partnersRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
