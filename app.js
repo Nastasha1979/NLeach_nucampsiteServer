@@ -1,12 +1,9 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
-var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const session = require("express-session");
-const FileStore = require("session-file-store")(session);
 const passport = require("passport");
-const authenticate = require("./authenticate");
+const config = require("./config");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -15,7 +12,7 @@ const promotionsRouter = require('./routes/promotionsRouter');
 const partnersRouter = require('./routes/partnersRouter');
 
 const mongoose = require("mongoose");
-const url = "mongodb://localhost:27017";
+const url = config.mongoUrl;
 const connect = mongoose.connect(url, { 
   useCreateIndex: true,
   useFindAndModify: false,
@@ -36,38 +33,12 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-// app.use(cookieParser("12345-67890-12345-67890"));
-app.use(session({
-  name: "session-id",
-  secret: "12345-67890-12345-67890",
-  saveUninitialized: false,
-  resave: false,
-  store: new FileStore()
-}));
 
-//to initialize sessions for users. only necessary if you are using sessions
 app.use(passport.initialize());
-app.use(passport.session());
-//so users can access these pages before authentication these have been moved up
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-//authentication
-function auth(req, res, next) {
-  console.log(req.user);
-
-  if (!req.user) {
-      const err = new Error('You are not authenticated!');                    
-      err.status = 401;
-      return next(err);
-  } else {
-      return next();
-  }
-}
-
-app.use(auth);
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 app.use('/campsites', campsiteRouter);
 app.use('/promotions', promotionsRouter);

@@ -1,6 +1,7 @@
 const express = require("express");
 const Promotion = require("../models/promotion");
 const promotionsRouter = express.Router();
+const authenticate = require("../authenticate");
 
 promotionsRouter.route("/")
 .get((req, res, next) => {
@@ -10,7 +11,7 @@ promotionsRouter.route("/")
         res.json(promotions);
     }).catch(err => next(err));
      
-}).post((req, res, next) => {
+}).post(authenticate.verifyUser, (req, res, next) => {
     Promotion.create(req.body).then(promotion => {
         console.log("Promotion created: ", promotion);
         res.statusCode = 200;
@@ -18,11 +19,11 @@ promotionsRouter.route("/")
         res.json(promotion);
     }).catch(err => next(err));
 
-}).put((req,res) => {
+}).put(authenticate.verifyUser, (req,res) => {
     res.statusCode = 403;                           
     res.end(`Put operation not supported on /promotions.`);
 
-}).delete((req, res, next) => {
+}).delete(authenticate.verifyUser, (req, res, next) => {
     Promotion.deleteMany().then(response => {
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
@@ -37,10 +38,10 @@ promotionsRouter.route("/:promotionsId")
         res.setHeader("Content-Type", "application/json");
         res.json(promotion);
     }).catch(err => next(err)); 
-}).post((req, res) => {
+}).post(authenticate.verifyUser, (req, res) => {
     res.statusCode = 403;
     res.end(`Post operations not supported on /promotions/${req.params.promotionsId}.`);
-}).put((req, res, next) => {
+}).put(authenticate.verifyUser, (req, res, next) => {
     Promotion.findByIdAndUpdate(req.params.promotionsId, {
         $set: req.body
     }, { new: true}).then(promotion => {
@@ -49,7 +50,7 @@ promotionsRouter.route("/:promotionsId")
         res.json(promotion);
     }).catch(err => next(err));
 
-}).delete((req, res, next) => {
+}).delete(authenticate.verifyUser, (req, res, next) => {
     Promotion.findByIdAndDelete(req.params.promotionsId).then(response => {
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
