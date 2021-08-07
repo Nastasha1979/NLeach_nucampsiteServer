@@ -11,7 +11,7 @@ promotionsRouter.route("/")
         res.json(promotions);
     }).catch(err => next(err));
      
-}).post(authenticate.verifyUser, (req, res, next) => {
+}).post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     Promotion.create(req.body).then(promotion => {
         console.log("Promotion created: ", promotion);
         res.statusCode = 200;
@@ -23,7 +23,7 @@ promotionsRouter.route("/")
     res.statusCode = 403;                           
     res.end(`Put operation not supported on /promotions.`);
 
-}).delete(authenticate.verifyUser, (req, res, next) => {
+}).delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     Promotion.deleteMany().then(response => {
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");
@@ -41,7 +41,7 @@ promotionsRouter.route("/:promotionsId")
 }).post(authenticate.verifyUser, (req, res) => {
     res.statusCode = 403;
     res.end(`Post operations not supported on /promotions/${req.params.promotionsId}.`);
-}).put(authenticate.verifyUser, (req, res, next) => {
+}).put(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     Promotion.findByIdAndUpdate(req.params.promotionsId, {
         $set: req.body
     }, { new: true}).then(promotion => {
@@ -50,7 +50,7 @@ promotionsRouter.route("/:promotionsId")
         res.json(promotion);
     }).catch(err => next(err));
 
-}).delete(authenticate.verifyUser, (req, res, next) => {
+}).delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     Promotion.findByIdAndDelete(req.params.promotionsId).then(response => {
         res.statusCode = 200;
         res.setHeader("Content-Type", "application/json");

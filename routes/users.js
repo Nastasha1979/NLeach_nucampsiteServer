@@ -10,7 +10,7 @@ const authenticate = require("../authenticate");
 //   res.send('respond with a resource');
 // });
 
-router.get("/", (req, res, next) => {
+router.get("/", authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
   User.find().then(user => {
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json");

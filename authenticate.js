@@ -36,4 +36,16 @@ exports.jwtPassport = passport.use(
     )
 );
 
+exports.verifyAdmin = (req, res, next) => {
+    if(!req.user.admin){
+        const err = new Error(`You are not authorized to complete this action`);
+        res.statusCode = 403;
+        return next(err);
+    } else {
+        res.statusCode = 200;
+        res.setHeader("Content-Type", "application/json");
+        return next();
+    }
+};
+
 exports.verifyUser = passport.authenticate("jwt", { session: false });
