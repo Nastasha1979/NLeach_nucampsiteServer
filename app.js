@@ -12,6 +12,7 @@ const promotionsRouter = require('./routes/promotionsRouter');
 const partnersRouter = require('./routes/partnersRouter');
 
 const mongoose = require("mongoose");
+
 const url = config.mongoUrl;
 const connect = mongoose.connect(url, { 
   useCreateIndex: true,
@@ -24,7 +25,16 @@ connect.then(() => console.log("Connected correctly to the mongodb server."),  /
   err=> console.log(err)
 );
 
-var app = express();
+const app = express();
+
+app.all("*", (req, res, next) => {
+  if(req.secure){
+    return next();
+  } else {
+    console.log(`Redirecting to : https://${req.hostname}: ${app.get("secPort")}${req.url}.`);
+    res.redirect(301, `https://${req.hostname}:${app.get('secPort')}${req.url}`);
+  }
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
