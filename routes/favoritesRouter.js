@@ -76,14 +76,14 @@ favoritesRouter.route("/:campsiteId")
             Favorite.findOne({ user: req.user._id}).then(favorite => {
                 if(favorite) {
                     if(favorite.campsites.includes(req.params.campsiteId)){
-                        res.statusCode = 200;
+                        res.statusCode = 220;
                         res.setHeader("Content-Type", "text/plan");
                         res.end(`${req.params.campsiteId} is already in your favorites.`);
                     } else {
                         
                         favorite.campsites.push(req.params.campsiteId);
                         favorite.save().then(fave => {
-                            res.statusCode = 220;
+                            res.statusCode = 200;
                             res.setHeader("Content-Type", "application/json");
                             res.json(fave);
                         });
