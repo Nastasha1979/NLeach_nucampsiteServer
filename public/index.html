@@ -1,7 +1,9 @@
+
 <html>
 <title>This is index.html</title>
 <body>
 <script>
+  const config = require("./config");
   // This is called with the results from from FB.getLoginStatus().
   function statusChangeCallback(response) {
     console.log('statusChangeCallback');
@@ -31,7 +33,7 @@
 
     window.fbAsyncInit = function() {
       FB.init({
-        appId      : '858459111754219',
+        appId      : config.facebook.clientId,
         xfbml      : true,
         version    : 'v2.10'
       });
